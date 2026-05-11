@@ -52,7 +52,7 @@ class WalkState : public IState {
             return nullptr;
         }
 
-        const char* get_name() const { return "Walk"; }
+        const char* get_name() const override { return "Walk"; }
 
         void set_transitions(IState* idle, IState* jump) {
             idle_state = idle;
