@@ -6,6 +6,8 @@ class EventBus;
 
 class SubscriptionHandle {
     public:
+        SubscriptionHandle() : bus(nullptr), type(typeid(void)), id(-1) {}
+
         SubscriptionHandle(EventBus* bus, std::type_index type, int id);
         ~SubscriptionHandle();
 
