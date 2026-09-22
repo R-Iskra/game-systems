@@ -25,12 +25,24 @@ A collection of reusable, engine-agnostic game systems written in C++.
 ```bash
 cmake -S . -B build
 cmake --build build
+```
+
+Run a specific system test:
+
+```bash
 ./build/test_state_machine.exe
+./build/test_event_bus.exe
 ```
 
 **Linux/Mac:**
 ```bash
 cmake -S . -B build
 cmake --build build
+```
+
+Run a specific system test:
+
+```bash
 ./build/test_state_machine
+./build/test_event_bus
 ```
