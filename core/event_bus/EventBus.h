@@ -12,6 +12,11 @@ class EventBus {
         EventBus() = default;
         ~EventBus() = default;
 
+        EventBus(const EventBus&) = delete;
+        EventBus& operator=(const EventBus&) = delete;
+        EventBus(EventBus&&) = delete;
+        EventBus& operator=(EventBus&&) = delete;
+
         template <typename TEvent> 
         SubscriptionHandle subscribe(std::function<void(const TEvent&)> callback);
 
