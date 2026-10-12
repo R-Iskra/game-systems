@@ -76,3 +76,16 @@ class CameraSystem {
     private:
         SubscriptionHandle player_hurt_sub;
 };
+
+class AchievementSystem {
+    public:
+        AchievementSystem(EventBus& bus) {
+            enemy_died_sub = bus.subscribe<EnemyDiedEvent>([this](const EnemyDiedEvent& e) {
+                std::cout << "AchievementSystem: enemy " << e.enemy_id << " died, unlocked 'First Blood'\n";
+                enemy_died_sub = SubscriptionHandle();
+            });
+        }
+
+    private:
+        SubscriptionHandle enemy_died_sub;
+};

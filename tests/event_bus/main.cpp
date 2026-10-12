@@ -5,6 +5,7 @@
 int main() {
     EventBus bus;
 
+    AchievementSystem achievements(bus);
     SoundSystem sound(bus);
     UISystem ui(bus);
     ScoreSystem score(bus);
