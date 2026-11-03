@@ -1,2 +1,2 @@
 add_executable(event_bus_example event_bus_example.cpp)
-target_link_libraries(event_bus_example PRIVATE event_bus)
+target_link_libraries(event_bus_example PRIVATE event_bus project_warnings)

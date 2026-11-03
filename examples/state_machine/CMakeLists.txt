@@ -1,2 +1,2 @@
 add_executable(state_machine_example state_machine_example.cpp)
-target_link_libraries(state_machine_example PRIVATE state_machine)
+target_link_libraries(state_machine_example PRIVATE state_machine project_warnings)
