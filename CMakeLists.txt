@@ -9,5 +9,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 add_subdirectory(core/state_machine)
 add_subdirectory(core/event_bus)
 
-add_subdirectory(tests/state_machine)
-add_subdirectory(tests/event_bus)
+add_subdirectory(examples/state_machine)
+add_subdirectory(examples/event_bus)

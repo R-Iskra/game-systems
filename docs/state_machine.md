@@ -13,7 +13,7 @@ A generic, reusable finite state machine designed to drive entities.
 
 ## Note
 
-Transitions are defined per state by the developer. Each concrete state implements `get_transition` and returns a pointer to the next state when its transition condition is met, or `nullptr` to remain in the current state. View `./tests/state_machine` for an example implementation.
+Transitions are defined per state by the developer. Each concrete state implements `get_transition` and returns a pointer to the next state when its transition condition is met, or `nullptr` to remain in the current state. View `./examples/state_machine` for an example implementation.
 
 ## Usage
 
