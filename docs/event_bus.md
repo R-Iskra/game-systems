@@ -18,7 +18,7 @@ A generic, reusable event system designed to allow game systems to communicate w
 
 The Event Bus is intended to decouple game systems that need to react to the same events. For example, an `EnemyDiedEvent` can be received independently by a sound system, UI system, and score system without those systems needing direct references to one another.
 
-View `./tests/event_bus for an example implementation.
+View `./examples/event_bus` for an example implementation.
 
 ## Usage
 

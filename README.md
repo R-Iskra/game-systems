@@ -19,30 +19,49 @@ A collection of reusable, engine-agnostic game systems written in C++.
 - CMake 3.20+
 - C++17 or higher
 
-### Compile and Run
+### Compiling
 
-**Windows:**
+**Windows/Linux/Mac:**
+
 ```bash
 cmake -S . -B build
 cmake --build build
 ```
 
-Run a specific system test:
+Add `-DBUILD_TESTING=OFF` to compile without test executables
 
 ```bash
-./build/test_state_machine.exe
-./build/test_event_bus.exe
+cmake -S . -B build -DBUILD_TESTING=OFF
 ```
 
-**Linux/Mac:**
+### Running Examples
+
+Run a specific system example on **Windows**:
+
 ```bash
-cmake -S . -B build
-cmake --build build
+./build/<system>_example.exe
 ```
 
-Run a specific system test:
+Example:
 
 ```bash
-./build/test_state_machine
-./build/test_event_bus
+./build/state_machine_example.exe
+```
+
+Run a specific system example on **Linux/Mac**:
+
+```bash
+./build/<system>_example
+```
+
+Example:
+
+```bash
+./build/state_machine_example
+```
+
+### Running Tests
+
+```bash
+ctest --test-dir build --output-on-failure
 ```

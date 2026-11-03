@@ -3,24 +3,31 @@ project(GameSystems)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(test_state_machine
-    core/state_machine/StateMachine.cpp
-    tests/state_machine/main.cpp
-)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
-target_include_directories(test_state_machine PRIVATE
-    core/state_machine
-    tests/state_machine
-)
+add_library(project_warnings INTERFACE)
+target_compile_options(project_warnings INTERFACE -Wall -Wextra -Wconversion -Wpedantic)
 
-add_executable(test_event_bus
-    core/event_bus/EventBus.cpp
-    core/event_bus/SubscriptionHandle.cpp
-    tests/event_bus/main.cpp
-)
+add_subdirectory(core/state_machine)
+add_subdirectory(core/event_bus)
 
-target_include_directories(test_event_bus PRIVATE
-    core/event_bus
-    tests/event_bus
-)
+add_subdirectory(examples/state_machine)
+add_subdirectory(examples/event_bus)
+
+include(CTest)
+
+if (BUILD_TESTING)
+    include(FetchContent)
+    FetchContent_Declare(Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.16.1
+        GIT_SHALLOW    TRUE)
+    FetchContent_MakeAvailable(Catch2)
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+    include(Catch)
+
+    add_subdirectory(tests/state_machine)
+    add_subdirectory(tests/event_bus)
+endif()

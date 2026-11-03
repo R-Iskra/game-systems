@@ -1,7 +1,8 @@
-#include <iostream>
+#include "ExampleStates.h"
 
-#include "../../core/state_machine/StateMachine.h"
-#include "TestStates.h"
+#include "state_machine/StateMachine.h"
+
+#include <iostream>
 
 void log_state(const StateMachine& sm) {
     std::cout << "Current state: " << sm.get_current_state()->get_name() << "\n";

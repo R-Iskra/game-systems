@@ -1,4 +1,5 @@
 #include "EventBus.h"
+
 #include "SubscriptionHandle.h"
 
 #include <algorithm>

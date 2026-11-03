@@ -1,11 +1,11 @@
 #pragma once
 
+#include "IState.h"
+#include "EntityContext.h"
+
 #include <memory>
 #include <unordered_map>
 #include <string>
-
-#include "IState.h"
-#include "EntityContext.h"
 
 class StateMachine {
     public:

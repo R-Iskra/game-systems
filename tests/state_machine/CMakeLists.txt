@@ -1,0 +1,3 @@
+add_executable(state_machine_tests state_machine_tests.cpp)
+target_link_libraries(state_machine_tests PRIVATE state_machine Catch2::Catch2WithMain project_warnings)
+catch_discover_tests(state_machine_tests ADD_TAGS_AS_LABELS)

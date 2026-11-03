@@ -1,4 +1,4 @@
-#include "../../core/state_machine/IState.h"
+#include "state_machine/IState.h"
 
 class IdleState;
 class WalkState;
