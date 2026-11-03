@@ -1,12 +1,12 @@
 #pragma once
 
+#include "SubscriptionHandle.h"
+
 #include <functional>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
 #include <utility>
-
-#include "SubscriptionHandle.h"
 
 class EventBus {
     public:

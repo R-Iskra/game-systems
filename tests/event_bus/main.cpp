@@ -1,6 +1,6 @@
-#include <iostream>
-
 #include "TestSystems.h"
+
+#include <iostream>
 
 int main() {
     EventBus bus;
