@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "../../core/event_bus/EventBus.h"
 
 struct EnemyDiedEvent {
