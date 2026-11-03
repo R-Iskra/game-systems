@@ -1,2 +1,2 @@
-add_executable(test_state_machine main.cpp)
-target_link_libraries(test_state_machine PRIVATE state_machine)
+add_executable(state_machine_example state_machine_example.cpp)
+target_link_libraries(state_machine_example PRIVATE state_machine)

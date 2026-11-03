@@ -27,11 +27,11 @@ cmake -S . -B build
 cmake --build build
 ```
 
-Run a specific system test:
+Run a specific system example:
 
 ```bash
-./build/test_state_machine.exe
-./build/test_event_bus.exe
+./build/state_machine_example.exe
+./build/event_bus_example.exe
 ```
 
 **Linux/Mac:**
@@ -40,9 +40,9 @@ cmake -S . -B build
 cmake --build build
 ```
 
-Run a specific system test:
+Run a specific system example:
 
 ```bash
-./build/test_state_machine
-./build/test_event_bus
+./build/state_machine_example
+./build/event_bus_example
 ```

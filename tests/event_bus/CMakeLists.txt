@@ -1,2 +1,2 @@
-add_executable(test_event_bus main.cpp)
-target_link_libraries(test_event_bus PRIVATE event_bus)
+add_executable(event_bus_example event_bus_example.cpp)
+target_link_libraries(event_bus_example PRIVATE event_bus)
