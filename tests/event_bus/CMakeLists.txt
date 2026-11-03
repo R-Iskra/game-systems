@@ -1,0 +1,3 @@
+add_executable(event_bus_tests event_bus_tests.cpp)
+target_link_libraries(event_bus_tests PRIVATE event_bus Catch2::Catch2WithMain project_warnings)
+catch_discover_tests(event_bus_tests ADD_TAGS_AS_LABELS)
