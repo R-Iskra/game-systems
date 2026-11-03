@@ -1,0 +1,2 @@
+add_executable(test_state_machine main.cpp)
+target_link_libraries(test_state_machine PRIVATE state_machine)
