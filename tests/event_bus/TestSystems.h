@@ -1,8 +1,8 @@
 #pragma once
 
-#include <iostream>
+#include "event_bus/EventBus.h"
 
-#include "../../core/event_bus/EventBus.h"
+#include <iostream>
 
 struct EnemyDiedEvent {
     int enemy_id;
