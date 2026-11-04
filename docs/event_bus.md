@@ -23,6 +23,8 @@ View `./examples/event_bus` for an example implementation.
 ## Usage
 
 ```cpp
+using namespace game_systems;
+
 EventBus bus;
 
 // create systems and subscribe them to the bus

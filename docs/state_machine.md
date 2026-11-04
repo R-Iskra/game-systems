@@ -18,6 +18,8 @@ Transitions are defined per state by the developer. Each concrete state implemen
 ## Usage
 
 ```cpp
+using namespace game_systems;
+
 StateMachine sm;
 
 // create states

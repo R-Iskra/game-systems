@@ -1,6 +1,6 @@
 # Game Systems
 
-A collection of reusable, engine-agnostic game systems written in C++.
+A collection of reusable, engine-agnostic game systems written in C++. All library types are in the `game_systems` namespace.
 
 ## Systems
 
