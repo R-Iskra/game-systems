@@ -1,5 +1,7 @@
 #pragma once
 
+namespace game_systems {
+
 struct Vector2 {
     float x = 0.f;
     float y = 0.f;
@@ -15,3 +17,5 @@ struct EntityContext {
     bool input_move_right = false;
     bool input_jump = false;
 };
+
+} // namespace game_systems

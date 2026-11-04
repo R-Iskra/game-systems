@@ -3,7 +3,7 @@
 #include <iostream>
 
 int main() {
-    EventBus bus;
+    game_systems::EventBus bus;
 
     AchievementSystem achievements(bus);
     SoundSystem sound(bus);

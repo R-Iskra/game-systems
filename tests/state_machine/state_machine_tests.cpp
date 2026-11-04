@@ -7,6 +7,8 @@
 
 #include <memory>
 
+using namespace game_systems;
+
 namespace {
     class NoTransitionState : public IState {
         public:

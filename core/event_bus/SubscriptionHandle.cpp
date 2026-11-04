@@ -4,6 +4,8 @@
 
 #include <cstdio>
 
+namespace game_systems {
+
 SubscriptionHandle::SubscriptionHandle(EventBus* bus, std::type_index type, int id)
     : bus(bus), type(type), id(id)
 {}
@@ -32,3 +34,5 @@ SubscriptionHandle& SubscriptionHandle::operator=(SubscriptionHandle&& other) no
     }
     return *this;
 }
+
+} // namespace game_systems

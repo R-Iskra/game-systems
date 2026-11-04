@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+namespace game_systems {
+
 void StateMachine::add_state(std::unique_ptr<IState> state) {
     std::string name = state->get_name();
     states[name] = std::move(state);
@@ -47,3 +49,5 @@ bool StateMachine::is_in_state(const char* state_name) const {
     if (!current_state) return false;
     return std::string(current_state->get_name()) == state_name;
 }
+
+} // namespace game_systems

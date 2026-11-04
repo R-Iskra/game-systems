@@ -8,6 +8,8 @@
 #include <vector>
 #include <utility>
 
+namespace game_systems {
+
 class EventBus {
     public:
         EventBus() = default;
@@ -92,3 +94,5 @@ void EventBus::publish(const TEvent& event) {
         }
     }
 }
+
+} // namespace game_systems
