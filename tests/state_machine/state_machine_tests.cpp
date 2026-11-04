@@ -14,7 +14,7 @@ namespace {
             void update(EntityContext&, float) override {}
             void exit(EntityContext&) override {}
 
-            IState* get_transition(EntityContext&) override {
+            IState* get_transition(const EntityContext&) const override {
                 return nullptr;
             }
 

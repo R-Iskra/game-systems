@@ -15,7 +15,7 @@ class IdleState : public IState {
 
         void exit(EntityContext& ctx) override {}
 
-        IState* get_transition(EntityContext& ctx) override {
+        IState* get_transition(const EntityContext& ctx) const override {
             if (ctx.input_jump) return jump_state;
             if (ctx.input_move_left || ctx.input_move_right) return walk_state;
 
@@ -46,7 +46,7 @@ class WalkState : public IState {
             ctx.velocity.x = 0.f;
         }
 
-        IState* get_transition(EntityContext& ctx) override {
+        IState* get_transition(const EntityContext& ctx) const override {
             if (ctx.input_jump) return jump_state;
             if (!ctx.input_move_left && !ctx.input_move_right) return idle_state;
             return nullptr;
@@ -78,7 +78,7 @@ class JumpState : public IState {
             ctx.velocity.y = 0.f;
         }
 
-        IState* get_transition(EntityContext& ctx) override {
+        IState* get_transition(const EntityContext& ctx) const override {
             if (ctx.is_on_floor) return idle_state;
             return nullptr;
         }
