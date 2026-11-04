@@ -2,6 +2,8 @@
 
 #include "EntityContext.h"
 
+namespace game_systems {
+
 class IState {
     public:
         virtual ~IState() = default;
@@ -14,3 +16,5 @@ class IState {
 
         virtual const char* get_name() const = 0;
 };
+
+} // namespace game_systems

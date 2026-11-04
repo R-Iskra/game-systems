@@ -2,6 +2,8 @@
 
 #include <typeindex>
 
+namespace game_systems {
+
 class EventBus;
 
 class SubscriptionHandle {
@@ -22,3 +24,5 @@ class SubscriptionHandle {
         std::type_index type;
         int id;
 };
+
+} // namespace game_systems

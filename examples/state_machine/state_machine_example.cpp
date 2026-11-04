@@ -4,13 +4,13 @@
 
 #include <iostream>
 
-void log_state(const StateMachine& sm) {
+void log_state(const game_systems::StateMachine& sm) {
     std::cout << "Current state: " << sm.get_current_state()->get_name() << "\n";
 }
 
 int main() {
-    EntityContext ctx;
-    StateMachine sm;
+    game_systems::EntityContext ctx;
+    game_systems::StateMachine sm;
 
     auto idle = std::make_unique<IdleState>();
     auto walk = std::make_unique<WalkState>();

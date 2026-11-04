@@ -15,7 +15,7 @@ struct PlayerHurtEvent {
 
 class SoundSystem {
     public:
-        SoundSystem(EventBus& bus) {
+        SoundSystem(game_systems::EventBus& bus) {
             enemy_died_sub = bus.subscribe<EnemyDiedEvent>([this](const EnemyDiedEvent& e) {
                 std::cout << "SoundSystem: playing enemy death sound\n";
             });
@@ -25,13 +25,13 @@ class SoundSystem {
         }
     
     private:
-        SubscriptionHandle enemy_died_sub;
-        SubscriptionHandle player_hurt_sub;
+        game_systems::SubscriptionHandle enemy_died_sub;
+        game_systems::SubscriptionHandle player_hurt_sub;
 };
 
 class UISystem {
     public:
-        UISystem(EventBus& bus) {
+        UISystem(game_systems::EventBus& bus) {
             enemy_died_sub = bus.subscribe<EnemyDiedEvent>([this](const EnemyDiedEvent& e) {
                 kill_count++;
                 std::cout << "UISystem: enemy " << e.enemy_id << " died, updating kill counter to " << kill_count << "\n";
@@ -43,15 +43,15 @@ class UISystem {
         }
 
     private:
-        SubscriptionHandle enemy_died_sub;
-        SubscriptionHandle player_hurt_sub;
+        game_systems::SubscriptionHandle enemy_died_sub;
+        game_systems::SubscriptionHandle player_hurt_sub;
         int kill_count = 0;
         int player_health = 100;
 };
 
 class ScoreSystem {
     public:
-        ScoreSystem(EventBus& bus) {
+        ScoreSystem(game_systems::EventBus& bus) {
             enemy_died_sub = bus.subscribe<EnemyDiedEvent>([this](const EnemyDiedEvent& e) {
                 score += e.score_value;
                 std::cout << "ScoreSystem: enemy " << e.enemy_id << " died, score now " << score << "\n";
@@ -59,35 +59,35 @@ class ScoreSystem {
         }
 
         void unsubscribe() {
-            enemy_died_sub = SubscriptionHandle();
+            enemy_died_sub = game_systems::SubscriptionHandle();
         }
 
     private:
-        SubscriptionHandle enemy_died_sub;
+        game_systems::SubscriptionHandle enemy_died_sub;
         int score = 0;
 };
 
 class CameraSystem {
     public:
-        CameraSystem(EventBus& bus) {
+        CameraSystem(game_systems::EventBus& bus) {
             player_hurt_sub = bus.subscribe<PlayerHurtEvent>([this](const PlayerHurtEvent& e) {
                 std::cout << "CameraSystem: player hurt, *screen shake*\n";
             });
         }
 
     private:
-        SubscriptionHandle player_hurt_sub;
+        game_systems::SubscriptionHandle player_hurt_sub;
 };
 
 class AchievementSystem {
     public:
-        AchievementSystem(EventBus& bus) {
+        AchievementSystem(game_systems::EventBus& bus) {
             enemy_died_sub = bus.subscribe<EnemyDiedEvent>([this](const EnemyDiedEvent& e) {
                 std::cout << "AchievementSystem: enemy " << e.enemy_id << " died, unlocked 'First Blood'\n";
-                enemy_died_sub = SubscriptionHandle();
+                enemy_died_sub = game_systems::SubscriptionHandle();
             });
         }
 
     private:
-        SubscriptionHandle enemy_died_sub;
+        game_systems::SubscriptionHandle enemy_died_sub;
 };

@@ -4,18 +4,18 @@ class IdleState;
 class WalkState;
 class JumpState;
 
-class IdleState : public IState {
+class IdleState : public game_systems::IState {
     public:
-        void enter(EntityContext& ctx) override {
+        void enter(game_systems::EntityContext& ctx) override {
             ctx.velocity.x = 0.f;
             ctx.velocity.y = 0.f;
         }
 
-        void update(EntityContext& ctx, float delta) override {}
+        void update(game_systems::EntityContext& ctx, float delta) override {}
 
-        void exit(EntityContext& ctx) override {}
+        void exit(game_systems::EntityContext& ctx) override {}
 
-        IState* get_transition(const EntityContext& ctx) const override {
+        IState* get_transition(const game_systems::EntityContext& ctx) const override {
             if (ctx.input_jump) return jump_state;
             if (ctx.input_move_left || ctx.input_move_right) return walk_state;
 
@@ -34,19 +34,19 @@ class IdleState : public IState {
         IState* jump_state = nullptr;
 };
 
-class WalkState : public IState {
+class WalkState : public game_systems::IState {
     public:
-        void enter(EntityContext& ctx) override {}
+        void enter(game_systems::EntityContext& ctx) override {}
 
-        void update(EntityContext& ctx, float delta) override {
+        void update(game_systems::EntityContext& ctx, float delta) override {
             ctx.velocity.x = ctx.input_move_right ? 100.f : -100.f;
         }
 
-        void exit(EntityContext& ctx) override {
+        void exit(game_systems::EntityContext& ctx) override {
             ctx.velocity.x = 0.f;
         }
 
-        IState* get_transition(const EntityContext& ctx) const override {
+        IState* get_transition(const game_systems::EntityContext& ctx) const override {
             if (ctx.input_jump) return jump_state;
             if (!ctx.input_move_left && !ctx.input_move_right) return idle_state;
             return nullptr;
@@ -64,21 +64,21 @@ class WalkState : public IState {
         IState* jump_state = nullptr;
 };
 
-class JumpState : public IState {
+class JumpState : public game_systems::IState {
     public:
-        void enter(EntityContext& ctx) override {
+        void enter(game_systems::EntityContext& ctx) override {
             ctx.velocity.y = -300.f;
         }
 
-        void update(EntityContext& ctx, float delta) override {
+        void update(game_systems::EntityContext& ctx, float delta) override {
             ctx.velocity.y +=600.f * delta;
         }
 
-        void exit(EntityContext& ctx) override {
+        void exit(game_systems::EntityContext& ctx) override {
             ctx.velocity.y = 0.f;
         }
 
-        IState* get_transition(const EntityContext& ctx) const override {
+        IState* get_transition(const game_systems::EntityContext& ctx) const override {
             if (ctx.is_on_floor) return idle_state;
             return nullptr;
         }

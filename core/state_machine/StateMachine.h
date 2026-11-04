@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <string>
 
+namespace game_systems {
+
 class StateMachine {
     public:
         StateMachine() = default;
@@ -26,3 +28,5 @@ class StateMachine {
         std::unordered_map<std::string, std::unique_ptr<IState>> states;
         IState* current_state = nullptr;
 };
+
+} // namespace game_systems

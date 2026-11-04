@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+namespace game_systems {
+
 void EventBus::unsubscribe(std::type_index type, int id) {
     for (auto it = pending.begin(); it != pending.end(); ++it) {
         if (it->subscriber.id == id) {
@@ -57,3 +59,5 @@ void EventBus::flush_pending() {
 
     pending.clear();
 }
+
+} // namespace game_systems
