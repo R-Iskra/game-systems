@@ -7,22 +7,22 @@ namespace game_systems {
 class EventBus;
 
 class SubscriptionHandle {
-    public:
-        SubscriptionHandle() : bus(nullptr), type(typeid(void)), id(-1) {}
+  public:
+    SubscriptionHandle() : bus(nullptr), type(typeid(void)), id(-1) {}
 
-        SubscriptionHandle(EventBus* bus, std::type_index type, int id);
-        ~SubscriptionHandle();
+    SubscriptionHandle(EventBus* bus, std::type_index type, int id);
+    ~SubscriptionHandle();
 
-        SubscriptionHandle(const SubscriptionHandle&) = delete;
-        SubscriptionHandle& operator=(const SubscriptionHandle&) = delete;
+    SubscriptionHandle(const SubscriptionHandle&) = delete;
+    SubscriptionHandle& operator=(const SubscriptionHandle&) = delete;
 
-        SubscriptionHandle(SubscriptionHandle&& other) noexcept;
-        SubscriptionHandle& operator=(SubscriptionHandle&& other) noexcept;
+    SubscriptionHandle(SubscriptionHandle&& other) noexcept;
+    SubscriptionHandle& operator=(SubscriptionHandle&& other) noexcept;
 
-    private:
-        EventBus* bus;
-        std::type_index type;
-        int id;
+  private:
+    EventBus* bus;
+    std::type_index type;
+    int id;
 };
 
 } // namespace game_systems

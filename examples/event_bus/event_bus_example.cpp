@@ -12,16 +12,16 @@ int main() {
     CameraSystem camera(bus);
 
     std::cout << "--- Enemy dies ---\n";
-    bus.publish(EnemyDiedEvent{ 1, 100 });
+    bus.publish(EnemyDiedEvent{1, 100});
 
     std::cout << "--- Player hurt ---\n";
-    bus.publish(PlayerHurtEvent{ 25.f });
+    bus.publish(PlayerHurtEvent{25.f});
 
     std::cout << "--- ScoreSystem unsubscribes from EnemyDiedEvent ---\n";
     score.unsubscribe();
 
     std::cout << "--- Enemy dies again ---\n";
-    bus.publish(EnemyDiedEvent{ 2, 200 });
+    bus.publish(EnemyDiedEvent{2, 200});
 
     return 0;
 }

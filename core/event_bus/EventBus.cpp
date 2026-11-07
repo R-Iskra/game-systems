@@ -27,14 +27,14 @@ void EventBus::unsubscribe(std::type_index type, int id) {
                 return;
             }
         }
-        
+
         return;
     }
 
     vec.erase(
-        std::remove_if(vec.begin(), vec.end(), [id](const Subscriber& sub) {
-            return sub.id == id;
-        }),
+        std::remove_if(
+            vec.begin(), vec.end(), [id](const Subscriber& sub) { return sub.id == id; }
+        ),
         vec.end()
     );
 }
@@ -43,9 +43,9 @@ void EventBus::flush_pending() {
     if (has_inactive) {
         for (auto& [type, vec] : subscribers) {
             vec.erase(
-                std::remove_if(vec.begin(), vec.end(), [](const Subscriber& sub) {
-                    return !sub.active;
-                }),
+                std::remove_if(
+                    vec.begin(), vec.end(), [](const Subscriber& sub) { return !sub.active; }
+                ),
                 vec.end()
             );
         }

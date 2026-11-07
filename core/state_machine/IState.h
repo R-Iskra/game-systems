@@ -5,16 +5,16 @@
 namespace game_systems {
 
 class IState {
-    public:
-        virtual ~IState() = default;
+  public:
+    virtual ~IState() = default;
 
-        virtual void enter(EntityContext& ctx) = 0;
-        virtual void update(EntityContext& ctx, float delta) = 0;
-        virtual void exit(EntityContext& ctx) = 0;
+    virtual void enter(EntityContext& ctx) = 0;
+    virtual void update(EntityContext& ctx, float delta) = 0;
+    virtual void exit(EntityContext& ctx) = 0;
 
-        virtual IState* get_transition(const EntityContext& ctx) const = 0;
+    virtual IState* get_transition(const EntityContext& ctx) const = 0;
 
-        virtual const char* get_name() const = 0;
+    virtual const char* get_name() const = 0;
 };
 
 } // namespace game_systems

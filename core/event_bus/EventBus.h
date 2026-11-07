@@ -5,60 +5,60 @@
 #include <functional>
 #include <typeindex>
 #include <unordered_map>
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace game_systems {
 
 class EventBus {
-    public:
-        EventBus() = default;
-        ~EventBus() = default;
+  public:
+    EventBus() = default;
+    ~EventBus() = default;
 
-        EventBus(const EventBus&) = delete;
-        EventBus& operator=(const EventBus&) = delete;
-        EventBus(EventBus&&) = delete;
-        EventBus& operator=(EventBus&&) = delete;
+    EventBus(const EventBus&) = delete;
+    EventBus& operator=(const EventBus&) = delete;
+    EventBus(EventBus&&) = delete;
+    EventBus& operator=(EventBus&&) = delete;
 
-        template <typename TEvent> 
-        SubscriptionHandle subscribe(std::function<void(const TEvent&)> callback);
+    template <typename TEvent>
+    SubscriptionHandle subscribe(std::function<void(const TEvent&)> callback);
 
-        template <typename TEvent>
-        void publish(const TEvent& event);
+    template <typename TEvent>
+    void publish(const TEvent& event);
 
-    private:
-        void unsubscribe(std::type_index type, int id);
-        void flush_pending();
-        friend class SubscriptionHandle;
+  private:
+    void unsubscribe(std::type_index type, int id);
+    void flush_pending();
+    friend class SubscriptionHandle;
 
-        using Callback = std::function<void(const void*)>;
+    using Callback = std::function<void(const void*)>;
 
-        struct Subscriber {
-            int id;
-            Callback callback;
-            bool active = true;
-        };
+    struct Subscriber {
+        int id;
+        Callback callback;
+        bool active = true;
+    };
 
-        struct PendingSubscriber {
-            std::type_index type;
-            Subscriber subscriber;
-        };
+    struct PendingSubscriber {
+        std::type_index type;
+        Subscriber subscriber;
+    };
 
-        struct PublishGuard {
-            EventBus& bus;
-            explicit PublishGuard(EventBus& bus) : bus(bus) { ++bus.publish_depth; }
-            ~PublishGuard() {
-                if (--bus.publish_depth == 0) bus.flush_pending();
-            }
-        };
+    struct PublishGuard {
+        EventBus& bus;
+        explicit PublishGuard(EventBus& bus) : bus(bus) { ++bus.publish_depth; }
+        ~PublishGuard() {
+            if (--bus.publish_depth == 0) bus.flush_pending();
+        }
+    };
 
-        std::unordered_map<std::type_index, std::vector<Subscriber>> subscribers;
+    std::unordered_map<std::type_index, std::vector<Subscriber>> subscribers;
 
-        std::vector<PendingSubscriber> pending;
-        int publish_depth = 0;
-        bool has_inactive = false;
+    std::vector<PendingSubscriber> pending;
+    int publish_depth = 0;
+    bool has_inactive = false;
 
-        int next_id = 0;
+    int next_id = 0;
 };
 
 template <typename TEvent>
@@ -69,10 +69,10 @@ SubscriptionHandle EventBus::subscribe(std::function<void(const TEvent&)> callba
         callback(*static_cast<const TEvent*>(event));
     };
 
-    Subscriber sub{ id, std::move(erased) };
+    Subscriber sub{id, std::move(erased)};
 
     if (publish_depth > 0) {
-        pending.push_back({ typeid(TEvent), std::move(sub) });
+        pending.push_back({typeid(TEvent), std::move(sub)});
     } else {
         subscribers[typeid(TEvent)].push_back(std::move(sub));
     }
