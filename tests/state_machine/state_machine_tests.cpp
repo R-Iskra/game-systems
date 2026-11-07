@@ -10,19 +10,17 @@
 using namespace game_systems;
 
 namespace {
-    class NoTransitionState : public IState {
-        public:
-            void enter(EntityContext&) override {}
-            void update(EntityContext&, float) override {}
-            void exit(EntityContext&) override {}
+class NoTransitionState : public IState {
+  public:
+    void enter(EntityContext&) override {}
+    void update(EntityContext&, float) override {}
+    void exit(EntityContext&) override {}
 
-            IState* get_transition(const EntityContext&) const override {
-                return nullptr;
-            }
+    IState* get_transition(const EntityContext&) const override { return nullptr; }
 
-            const char* get_name() const override { return "NoTransitionState"; }
-    };
-}   // namespace
+    const char* get_name() const override { return "NoTransitionState"; }
+};
+} // namespace
 
 TEST_CASE("starting enters the named state", "[state_machine][start]") {
     EntityContext ctx;
