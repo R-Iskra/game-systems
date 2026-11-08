@@ -5,30 +5,106 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <functional>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 using namespace game_systems;
 
 namespace {
-class NoTransitionState : public IState {
-  public:
-    void enter(EntityContext&) override {}
-    void update(EntityContext&, float) override {}
-    void exit(EntityContext&) override {}
 
-    IState* get_transition(const EntityContext&) const override { return nullptr; }
-
-    const char* get_name() const override { return "NoTransitionState"; }
+struct HookLog {
+    std::vector<std::string> calls;
+    std::vector<float> deltas;
 };
+
+class TestState : public IState {
+  public:
+    TestState(std::string name, HookLog& log) : name(std::move(name)), log(log) {}
+    ~TestState() override { log.calls.push_back(name + ".destroyed"); }
+
+    void enter(EntityContext&) override {
+        log.calls.push_back(name + ".enter");
+        if (on_enter) on_enter();
+    }
+    void update(EntityContext&, float delta) override {
+        log.calls.push_back(name + ".update");
+        log.deltas.push_back(delta);
+    }
+    void exit(EntityContext&) override {
+        log.calls.push_back(name + ".exit");
+        if (on_exit) on_exit();
+    }
+
+    IState* get_transition(const EntityContext&) const override {
+        log.calls.push_back(name + ".check");
+        return target;
+    }
+    const char* get_name() const override { return name.c_str(); }
+
+    IState* target = nullptr;
+    std::function<void()> on_enter;
+    std::function<void()> on_exit;
+
+  private:
+    std::string name;
+    HookLog& log;
+};
+
+TestState* add_test_state(StateMachine& sm, std::string name, HookLog& log) {
+    auto state = std::make_unique<TestState>(std::move(name), log);
+    TestState* raw = state.get();
+    sm.add_state(std::move(state));
+    return raw;
+}
+
 } // namespace
 
-TEST_CASE("starting enters the named state", "[state_machine][start]") {
-    EntityContext ctx;
+TEST_CASE("start finds any added state by its name", "[state_machine][add_state][start]") {
+    HookLog log;
     StateMachine sm;
+    EntityContext ctx;
 
-    sm.add_state(std::make_unique<NoTransitionState>());
+    sm.add_state(std::make_unique<TestState>("A", log));
+    sm.add_state(std::make_unique<TestState>("B", log));
+    sm.add_state(std::make_unique<TestState>("C", log));
 
-    sm.start("NoTransitionState", ctx);
+    sm.start("B", ctx);
 
-    CHECK(sm.is_in_state("NoTransitionState"));
+    std::vector<std::string> expected_calls = {"B.enter"};
+
+    CHECK(log.calls == expected_calls);
+}
+
+TEST_CASE("start makes the named state current", "[state_machine][start]") {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    CHECK(sm.get_current_state() == b);
+}
+
+TEST_CASE(
+    "start with an unknown name throws and leaves the machine unstarted", "[state_machine][start]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    sm.add_state(std::make_unique<TestState>("B", log));
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    REQUIRE_THROWS(sm.start("Missing", ctx));
+
+    CHECK(sm.get_current_state() == nullptr);
+    CHECK(log.calls.empty());
 }
