@@ -132,3 +132,22 @@ TEST_CASE("start on a started machine throws and leaves it unchanged", "[state_m
     CHECK(sm.get_current_state() == b);
     CHECK(log.calls == expected_calls);
 }
+
+TEST_CASE(
+    "start with a null name throws and leaves the machine unstarted", "[state_machine][start]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    sm.add_state(std::make_unique<TestState>("B", log));
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    CHECK_THROWS_AS(sm.start(nullptr, ctx), std::invalid_argument);
+
+    CHECK(sm.get_current_state() == nullptr);
+    CHECK(log.calls.empty());
+
+    CHECK_NOTHROW(sm.start("A", ctx));
+}
