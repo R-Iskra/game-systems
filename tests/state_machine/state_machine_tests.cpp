@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -103,8 +104,10 @@ TEST_CASE(
     sm.add_state(std::make_unique<TestState>("B", log));
     sm.add_state(std::make_unique<TestState>("C", log));
 
-    REQUIRE_THROWS(sm.start("Missing", ctx));
+    CHECK_THROWS_AS(sm.start("Missing", ctx), std::invalid_argument);
 
     CHECK(sm.get_current_state() == nullptr);
     CHECK(log.calls.empty());
+
+    CHECK_NOTHROW(sm.start("A", ctx));
 }
