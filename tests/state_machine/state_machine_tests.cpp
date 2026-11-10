@@ -111,3 +111,24 @@ TEST_CASE(
 
     CHECK_NOTHROW(sm.start("A", ctx));
 }
+
+TEST_CASE("start on a started machine throws and leaves it unchanged", "[state_machine][start]") {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    CHECK_THROWS_AS(sm.start("C", ctx), std::logic_error);
+
+    std::vector<std::string> expected_calls = {"B.enter"};
+
+    CHECK(sm.get_current_state() == b);
+    CHECK(log.calls == expected_calls);
+}
