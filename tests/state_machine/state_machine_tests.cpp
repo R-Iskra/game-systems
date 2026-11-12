@@ -151,3 +151,22 @@ TEST_CASE(
 
     CHECK_NOTHROW(sm.start("A", ctx));
 }
+
+TEST_CASE(
+    "add_state with a duplicate name throws and keeps the original state",
+    "[state_machine][add_state]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    CHECK_THROWS_AS(sm.add_state(std::make_unique<TestState>("B", log)), std::invalid_argument);
+
+    sm.start("B", ctx);
+
+    CHECK(sm.get_current_state() == b);
+}
