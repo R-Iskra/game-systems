@@ -170,3 +170,24 @@ TEST_CASE(
 
     CHECK(sm.get_current_state() == b);
 }
+
+TEST_CASE(
+    "add_state with a null state throws and leaves the machine unchanged",
+    "[state_machine][add_state]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    CHECK_THROWS_AS(sm.add_state(nullptr), std::invalid_argument);
+
+    CHECK(log.calls.empty());
+
+    sm.start("B", ctx);
+
+    CHECK(sm.get_current_state() == b);
+}
