@@ -543,6 +543,20 @@ TEST_CASE("is_in_state with an unknown name throws", "[state_machine][is_in_stat
     CHECK_THROWS_AS(sm.is_in_state("Missing"), std::invalid_argument);
 }
 
+TEST_CASE(
+    "is_in_state with an unknown name throws on an unstarted machine",
+    "[state_machine][is_in_state]"
+) {
+    HookLog log;
+    StateMachine sm;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    sm.add_state(std::make_unique<TestState>("B", log));
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    CHECK_THROWS_AS(sm.is_in_state("Missing"), std::invalid_argument);
+}
+
 TEST_CASE("is_in_state with a null name throws", "[state_machine][is_in_state]") {
     HookLog log;
     StateMachine sm;
