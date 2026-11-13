@@ -217,3 +217,29 @@ TEST_CASE(
 
     CHECK_THROWS(sm.force_transition("D", ctx));
 }
+
+TEST_CASE(
+    "update without a transition checks then updates the current state", "[state_machine][update]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    sm.update(ctx, 0.25f);
+
+    std::vector<std::string> expected_calls = {"B.enter", "B.check", "B.update"};
+
+    CHECK(log.calls == expected_calls);
+
+    std::vector<float> expected_deltas = {0.25f};
+
+    CHECK(log.deltas == expected_deltas);
+}
