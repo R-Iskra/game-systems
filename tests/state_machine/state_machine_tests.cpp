@@ -314,3 +314,32 @@ TEST_CASE(
 
     CHECK_NOTHROW(sm.start("B", ctx));
 }
+
+TEST_CASE(
+    "update with a transition to an unowned state throws and leaves the machine unchanged",
+    "[state_machine][update]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    TestState d("D", log);
+
+    b->target = &d;
+
+    CHECK_THROWS_AS(sm.update(ctx, 0.25f), std::logic_error);
+
+    CHECK(sm.get_current_state() == b);
+
+    std::vector<std::string> expected_calls = {"B.enter", "B.check"};
+
+    CHECK(log.calls == expected_calls);
+}
