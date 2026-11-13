@@ -263,3 +263,34 @@ TEST_CASE("update with a transition makes the target current", "[state_machine][
 
     CHECK(sm.get_current_state() == c);
 }
+
+TEST_CASE(
+    "update with a transition exits the current state then enters and updates the target",
+    "[state_machine][update]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    TestState* c = add_test_state(sm, "C", log);
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    b->target = c;
+
+    sm.update(ctx, 0.25f);
+
+    std::vector<std::string> expected_calls = {
+        "B.enter", "B.check", "B.exit", "C.enter", "C.update"
+    };
+
+    CHECK(log.calls == expected_calls);
+
+    std::vector<float> expected_deltas = {0.25f};
+
+    CHECK(log.deltas == expected_deltas);
+}
