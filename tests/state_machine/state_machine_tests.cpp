@@ -191,3 +191,29 @@ TEST_CASE(
 
     CHECK(sm.get_current_state() == b);
 }
+
+TEST_CASE(
+    "add_state on a started machine throws and leaves it unchanged", "[state_machine][add_state]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    CHECK_THROWS_AS(sm.add_state(std::make_unique<TestState>("D", log)), std::logic_error);
+
+    CHECK(sm.get_current_state() == b);
+
+    std::vector<std::string> expected_calls = {"B.enter", "D.destroyed"};
+
+    CHECK(log.calls == expected_calls);
+
+    CHECK_THROWS(sm.force_transition("D", ctx));
+}
