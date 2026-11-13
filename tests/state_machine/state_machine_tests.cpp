@@ -343,3 +343,31 @@ TEST_CASE(
 
     CHECK(log.calls == expected_calls);
 }
+
+TEST_CASE(
+    "update rejects an unowned state that shares an owned state's name", "[state_machine][update]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    TestState imposter("C", log);
+
+    b->target = &imposter;
+
+    CHECK_THROWS_AS(sm.update(ctx, 0.25f), std::logic_error);
+
+    CHECK(sm.get_current_state() == b);
+
+    std::vector<std::string> expected_calls = {"B.enter", "B.check"};
+
+    CHECK(log.calls == expected_calls);
+}
