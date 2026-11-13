@@ -458,3 +458,28 @@ TEST_CASE(
 
     CHECK(log.calls == expected_calls);
 }
+
+TEST_CASE(
+    "force_transition with a null name throws and leaves the machine unchanged",
+    "[state_machine][force_transition]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    CHECK_THROWS_AS(sm.force_transition(nullptr, ctx), std::invalid_argument);
+
+    CHECK(sm.get_current_state() == b);
+
+    std::vector<std::string> expected_calls = {"B.enter"};
+
+    CHECK(log.calls == expected_calls);
+}
