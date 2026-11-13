@@ -483,3 +483,19 @@ TEST_CASE(
 
     CHECK(log.calls == expected_calls);
 }
+
+TEST_CASE("is_in_state is true for the current state's name", "[state_machine][is_in_state]") {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    CHECK(sm.is_in_state("B"));
+}
