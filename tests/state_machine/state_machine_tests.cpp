@@ -394,3 +394,21 @@ TEST_CASE(
 
     CHECK(log.calls == expected_calls);
 }
+
+TEST_CASE("force_transition makes the named state current", "[state_machine][force_transition]") {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    TestState* c = add_test_state(sm, "C", log);
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    sm.force_transition("C", ctx);
+
+    CHECK(sm.get_current_state() == c);
+}
