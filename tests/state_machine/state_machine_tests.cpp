@@ -294,3 +294,23 @@ TEST_CASE(
 
     CHECK(log.deltas == expected_deltas);
 }
+
+TEST_CASE(
+    "update on an unstarted machine throws and leaves it unstarted", "[state_machine][update]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    sm.add_state(std::make_unique<TestState>("B", log));
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    CHECK_THROWS_AS(sm.update(ctx, 0.25f), std::logic_error);
+
+    CHECK(sm.get_current_state() == nullptr);
+
+    CHECK(log.calls.empty());
+
+    CHECK_NOTHROW(sm.start("B", ctx));
+}
