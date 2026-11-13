@@ -515,3 +515,14 @@ TEST_CASE("is_in_state is false for another state in the machine", "[state_machi
 
     CHECK_FALSE(sm.is_in_state("A"));
 }
+
+TEST_CASE("is_in_state is false on an unstarted machine", "[state_machine][is_in_state]") {
+    HookLog log;
+    StateMachine sm;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    sm.add_state(std::make_unique<TestState>("B", log));
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    CHECK_FALSE(sm.is_in_state("B"));
+}
