@@ -526,3 +526,19 @@ TEST_CASE("is_in_state is false on an unstarted machine", "[state_machine][is_in
 
     CHECK_FALSE(sm.is_in_state("B"));
 }
+
+TEST_CASE("is_in_state with an unknown name throws", "[state_machine][is_in_state]") {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    CHECK_THROWS_AS(sm.is_in_state("Missing"), std::invalid_argument);
+}
