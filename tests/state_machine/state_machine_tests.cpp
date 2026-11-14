@@ -819,3 +819,36 @@ TEST_CASE("reentrant is_in_state from update is allowed", "[state_machine][reent
 
     CHECK(hook_ran);
 }
+
+TEST_CASE(
+    "reentrant rejection clears once the outer call returns", "[state_machine][reentrancy][update]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    TestState* c = add_test_state(sm, "C", log);
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    bool rejected = false;
+    b->on_update = [&] {
+        try {
+            sm.force_transition("C", ctx);
+        } catch (const std::logic_error&) {
+            rejected = true;
+        }
+    };
+
+    sm.update(ctx, 0.25f);
+
+    REQUIRE(rejected);
+
+    CHECK_NOTHROW(sm.force_transition("C", ctx));
+
+    CHECK(sm.get_current_state() == c);
+}
