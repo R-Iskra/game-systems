@@ -445,6 +445,29 @@ TEST_CASE("force_transition makes the named state current", "[state_machine][for
 }
 
 TEST_CASE(
+    "force_transition to the current state exits and re-enters it",
+    "[state_machine][force_transition]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    sm.force_transition("B", ctx);
+
+    std::vector<std::string> expected_calls = {"B.enter", "B.exit", "B.enter"};
+
+    CHECK(log.calls == expected_calls);
+}
+
+TEST_CASE(
     "force_transition on an unstarted machine throws and leaves it unstarted",
     "[state_machine][force_transition]"
 ) {
