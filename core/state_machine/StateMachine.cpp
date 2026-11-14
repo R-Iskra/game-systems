@@ -10,6 +10,15 @@ void StateMachine::add_state(std::unique_ptr<IState> state) {
     }
 
     std::string name = state->get_name();
+
+    if (states.find(name) != states.end()) {
+        throw std::invalid_argument("State already exists: " + name);
+    }
+
+    if (current_state != nullptr) {
+        throw std::logic_error("Cannot add a state after start");
+    }
+
     states[name] = std::move(state);
 }
 
