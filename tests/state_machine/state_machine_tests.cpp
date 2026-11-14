@@ -795,3 +795,27 @@ TEST_CASE(
 
     CHECK(log.calls == expected_calls);
 }
+
+TEST_CASE("reentrant is_in_state from update is allowed", "[state_machine][reentrancy][update]") {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    bool hook_ran = false;
+    b->on_update = [&] {
+        CHECK_NOTHROW(sm.is_in_state("B"));
+        hook_ran = true;
+    };
+
+    sm.update(ctx, 0.25f);
+
+    CHECK(hook_ran);
+}
