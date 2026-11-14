@@ -23,6 +23,12 @@ class StateMachine {
     bool is_in_state(const char* state_name) const;
 
   private:
+    struct CallbackGuard {
+        StateMachine& sm;
+        explicit CallbackGuard(StateMachine& sm) : sm(sm) { sm.in_callback = true; }
+        ~CallbackGuard() { sm.in_callback = false; }
+    };
+
     void transition_to(IState* new_state, EntityContext& ctx);
     bool is_started() const { return current_state != nullptr; }
     bool owns(const IState* state) const;
@@ -30,6 +36,7 @@ class StateMachine {
 
     std::unordered_map<std::string, std::unique_ptr<IState>> states;
     IState* current_state = nullptr;
+    bool in_callback = false;
 };
 
 } // namespace game_systems

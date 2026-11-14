@@ -15,8 +15,12 @@ void StateMachine::add_state(std::unique_ptr<IState> state) {
         throw std::invalid_argument("State already exists: " + name);
     }
 
+    if (in_callback) {
+        throw std::logic_error("Cannot add_state from inside a state callback");
+    }
+
     if (is_started()) {
-        throw std::logic_error("Cannot add a state after start");
+        throw std::logic_error("Cannot add_state after start");
     }
 
     states[name] = std::move(state);
@@ -24,17 +28,31 @@ void StateMachine::add_state(std::unique_ptr<IState> state) {
 
 void StateMachine::start(const char* initial_state_name, EntityContext& ctx) {
     IState* state = require_state(initial_state_name);
+
+    if (in_callback) {
+        throw std::logic_error("Cannot start from inside a state callback");
+    }
+
     if (is_started()) {
         throw std::logic_error("Cannot start an already started machine");
     }
+
+    CallbackGuard guard(*this);
+
     current_state = state;
     current_state->enter(ctx);
 }
 
 void StateMachine::update(EntityContext& ctx, float delta) {
+    if (in_callback) {
+        throw std::logic_error("Cannot update from inside a state callback");
+    }
+
     if (!is_started()) {
         throw std::logic_error("Cannot update before start");
     }
+
+    CallbackGuard guard(*this);
 
     IState* next = current_state->get_transition(ctx);
 
@@ -51,9 +69,17 @@ void StateMachine::update(EntityContext& ctx, float delta) {
 
 void StateMachine::force_transition(const char* state_name, EntityContext& ctx) {
     IState* state = require_state(state_name);
+
+    if (in_callback) {
+        throw std::logic_error("Cannot force_transition from inside a state callback");
+    }
+
     if (!is_started()) {
         throw std::logic_error("Cannot force_transition before start");
     }
+
+    CallbackGuard guard(*this);
+
     transition_to(state, ctx);
 }
 
