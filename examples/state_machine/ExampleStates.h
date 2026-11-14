@@ -1,8 +1,7 @@
-#include "state_machine/IState.h"
+#pragma once
 
-class IdleState;
-class WalkState;
-class JumpState;
+#include "state_machine/EntityContext.h"
+#include "state_machine/IState.h"
 
 class IdleState : public game_systems::IState {
   public:

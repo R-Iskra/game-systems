@@ -3,6 +3,8 @@
 #include "state_machine/StateMachine.h"
 
 #include <iostream>
+#include <memory>
+#include <utility>
 
 void log_state(const game_systems::StateMachine& sm) {
     std::cout << "Current state: " << sm.get_current_state()->get_name() << "\n";
