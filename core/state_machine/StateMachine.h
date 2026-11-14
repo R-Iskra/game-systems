@@ -25,6 +25,7 @@ class StateMachine {
   private:
     void transition_to(IState* new_state, EntityContext& ctx);
     bool is_started() const { return current_state != nullptr; }
+    bool owns(const IState* state) const;
     IState* require_state(const char* name) const;
 
     std::unordered_map<std::string, std::unique_ptr<IState>> states;

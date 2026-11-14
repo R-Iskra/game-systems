@@ -37,9 +37,15 @@ void StateMachine::update(EntityContext& ctx, float delta) {
     }
 
     IState* next = current_state->get_transition(ctx);
+
     if (next != nullptr) {
+        if (!owns(next)) {
+            throw std::logic_error("Cannot transition to a state this machine does not own");
+        }
+
         transition_to(next, ctx);
     }
+
     current_state->update(ctx, delta);
 }
 
@@ -63,6 +69,13 @@ void StateMachine::transition_to(IState* new_state, EntityContext& ctx) {
     }
     current_state = new_state;
     current_state->enter(ctx);
+}
+
+bool StateMachine::owns(const IState* state) const {
+    for (const auto& [name, owned] : states) {
+        if (owned.get() == state) return true;
+    }
+    return false;
 }
 
 IState* StateMachine::require_state(const char* name) const {
