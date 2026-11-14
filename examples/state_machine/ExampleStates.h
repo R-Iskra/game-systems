@@ -10,9 +10,9 @@ class IdleState : public game_systems::IState {
         ctx.velocity.y = 0.f;
     }
 
-    void update(game_systems::EntityContext& ctx, float delta) override {}
+    void update(game_systems::EntityContext&, float) override {}
 
-    void exit(game_systems::EntityContext& ctx) override {}
+    void exit(game_systems::EntityContext&) override {}
 
     IState* get_transition(const game_systems::EntityContext& ctx) const override {
         if (ctx.input_jump) return jump_state;
@@ -35,9 +35,9 @@ class IdleState : public game_systems::IState {
 
 class WalkState : public game_systems::IState {
   public:
-    void enter(game_systems::EntityContext& ctx) override {}
+    void enter(game_systems::EntityContext&) override {}
 
-    void update(game_systems::EntityContext& ctx, float delta) override {
+    void update(game_systems::EntityContext& ctx, float) override {
         ctx.velocity.x = ctx.input_move_right ? 100.f : -100.f;
     }
 
