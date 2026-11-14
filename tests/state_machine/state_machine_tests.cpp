@@ -679,3 +679,39 @@ TEST_CASE(
 
     CHECK(log.calls == expected_calls);
 }
+
+TEST_CASE(
+    "reentrant force_transition from get_transition throws and the outer update completes",
+    "[state_machine][reentrancy][update]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    bool rejected = false;
+    b->on_check = [&] {
+        try {
+            sm.force_transition("C", ctx);
+        } catch (const std::logic_error&) {
+            rejected = true;
+        }
+    };
+
+    sm.update(ctx, 0.25f);
+
+    CHECK(rejected);
+
+    CHECK(sm.get_current_state() == b);
+
+    std::vector<std::string> expected_calls = {"B.enter", "B.check", "B.update"};
+
+    CHECK(log.calls == expected_calls);
+}
