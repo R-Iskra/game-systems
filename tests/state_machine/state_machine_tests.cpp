@@ -645,6 +645,38 @@ TEST_CASE(
 }
 
 TEST_CASE(
+    "reentrant force_transition from enter throws and the outer start completes",
+    "[state_machine][reentrancy][start]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    bool rejected = false;
+    b->on_enter = [&] {
+        try {
+            sm.force_transition("C", ctx);
+        } catch (const std::logic_error&) {
+            rejected = true;
+        }
+    };
+
+    sm.start("B", ctx);
+
+    CHECK(rejected);
+
+    CHECK(sm.get_current_state() == b);
+
+    std::vector<std::string> expected_calls = {"B.enter"};
+
+    CHECK(log.calls == expected_calls);
+}
+
+TEST_CASE(
     "reentrant force_transition from update throws and the outer update completes",
     "[state_machine][reentrancy][update]"
 ) {
