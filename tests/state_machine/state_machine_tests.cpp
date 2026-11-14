@@ -33,6 +33,7 @@ class TestState : public IState {
     void update(EntityContext&, float delta) override {
         log.calls.push_back(name + ".update");
         log.deltas.push_back(delta);
+        if (on_update) on_update();
     }
     void exit(EntityContext&) override {
         log.calls.push_back(name + ".exit");
@@ -41,13 +42,16 @@ class TestState : public IState {
 
     IState* get_transition(const EntityContext&) const override {
         log.calls.push_back(name + ".check");
+        if (on_check) on_check();
         return target;
     }
     const char* get_name() const override { return name.c_str(); }
 
     IState* target = nullptr;
     std::function<void()> on_enter;
+    std::function<void()> on_update;
     std::function<void()> on_exit;
+    std::function<void()> on_check;
 
   private:
     std::string name;
