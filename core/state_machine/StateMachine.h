@@ -14,6 +14,11 @@ class StateMachine {
     StateMachine() = default;
     ~StateMachine() = default;
 
+    StateMachine(const StateMachine&) = delete;
+    StateMachine& operator=(const StateMachine&) = delete;
+    StateMachine(StateMachine&&) = delete;
+    StateMachine& operator=(StateMachine&&) = delete;
+
     void add_state(std::unique_ptr<IState> state);
     void start(const char* initial_state_name, EntityContext& ctx);
     void update(EntityContext& ctx, float delta);
