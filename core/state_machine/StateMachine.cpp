@@ -39,9 +39,8 @@ void StateMachine::update(EntityContext& ctx, float delta) {
     IState* next = current_state->get_transition(ctx);
     if (next != nullptr) {
         transition_to(next, ctx);
-    } else {
-        current_state->update(ctx, delta);
     }
+    current_state->update(ctx, delta);
 }
 
 void StateMachine::force_transition(const char* state_name, EntityContext& ctx) {
