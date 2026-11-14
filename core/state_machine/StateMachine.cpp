@@ -15,7 +15,7 @@ void StateMachine::add_state(std::unique_ptr<IState> state) {
         throw std::invalid_argument("State already exists: " + name);
     }
 
-    if (current_state != nullptr) {
+    if (is_started()) {
         throw std::logic_error("Cannot add a state after start");
     }
 
@@ -24,12 +24,17 @@ void StateMachine::add_state(std::unique_ptr<IState> state) {
 
 void StateMachine::start(const char* initial_state_name, EntityContext& ctx) {
     IState* state = require_state(initial_state_name);
+    if (is_started()) {
+        throw std::logic_error("Cannot start an already started machine");
+    }
     current_state = state;
     current_state->enter(ctx);
 }
 
 void StateMachine::update(EntityContext& ctx, float delta) {
-    if (!current_state) return;
+    if (!is_started()) {
+        throw std::logic_error("Cannot update before start");
+    }
 
     IState* next = current_state->get_transition(ctx);
     if (next != nullptr) {
@@ -41,6 +46,9 @@ void StateMachine::update(EntityContext& ctx, float delta) {
 
 void StateMachine::force_transition(const char* state_name, EntityContext& ctx) {
     IState* state = require_state(state_name);
+    if (!is_started()) {
+        throw std::logic_error("Cannot force_transition before start");
+    }
     transition_to(state, ctx);
 }
 
