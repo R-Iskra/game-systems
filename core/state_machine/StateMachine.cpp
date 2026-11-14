@@ -5,6 +5,10 @@
 namespace game_systems {
 
 void StateMachine::add_state(std::unique_ptr<IState> state) {
+    if (state == nullptr) {
+        throw std::invalid_argument("State is null");
+    }
+
     std::string name = state->get_name();
     states[name] = std::move(state);
 }
