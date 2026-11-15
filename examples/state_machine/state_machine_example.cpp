@@ -1,11 +1,15 @@
 #include "ExampleStates.h"
 
+#include "state_machine/EntityContext.h"
 #include "state_machine/StateMachine.h"
 
 #include <iostream>
+#include <memory>
+#include <utility>
 
-void log_state(const game_systems::StateMachine& sm) {
-    std::cout << "Current state: " << sm.get_current_state()->get_name() << "\n";
+void log_state(const game_systems::StateMachine& sm, const game_systems::EntityContext& ctx) {
+    std::cout << "Current state: " << sm.get_current_state()->get_name() << ", velocity: ("
+              << ctx.velocity.x << ", " << ctx.velocity.y << ")" << "\n";
 }
 
 int main() {
@@ -31,24 +35,24 @@ int main() {
     sm.start("Idle", ctx);
 
     std::cout << "--- Initial ---\n";
-    log_state(sm);
+    log_state(sm, ctx);
 
     std::cout << "--- Move Right ---\n";
     ctx.input_move_right = true;
     sm.update(ctx, 0.016f);
-    log_state(sm);
+    log_state(sm, ctx);
 
     std::cout << "--- Jump ---\n";
     ctx.input_jump = true;
     sm.update(ctx, 0.016f);
-    log_state(sm);
+    log_state(sm, ctx);
 
     std::cout << "--- Land ---\n";
     ctx.input_jump = false;
     ctx.is_on_floor = true;
     ctx.input_move_right = false;
     sm.update(ctx, 0.016f);
-    log_state(sm);
+    log_state(sm, ctx);
 
     return 0;
 }

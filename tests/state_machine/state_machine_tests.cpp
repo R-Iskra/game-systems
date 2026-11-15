@@ -884,3 +884,29 @@ TEST_CASE(
 
     CHECK(sm.get_current_state() == c);
 }
+
+TEST_CASE(
+    "reentrant rejection clears after the outer call throws", "[state_machine][reentrancy][update]"
+) {
+    HookLog log;
+    StateMachine sm;
+    EntityContext ctx;
+
+    sm.add_state(std::make_unique<TestState>("A", log));
+    TestState* b = add_test_state(sm, "B", log);
+    sm.add_state(std::make_unique<TestState>("C", log));
+
+    sm.start("B", ctx);
+
+    REQUIRE(sm.get_current_state() == b);
+
+    TestState d("D", log);
+
+    b->target = &d;
+
+    REQUIRE_THROWS_AS(sm.update(ctx, 0.25f), std::logic_error);
+
+    b->target = nullptr;
+
+    CHECK_NOTHROW(sm.update(ctx, 0.25f));
+}
