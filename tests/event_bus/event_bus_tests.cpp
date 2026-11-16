@@ -22,3 +22,16 @@ auto record(std::vector<std::string>& log, std::string label) {
 }
 
 } // namespace
+
+TEST_CASE("publish delivers the event's data to a subscriber", "[event_bus][publish]") {
+    std::vector<int> received;
+    EventBus bus;
+
+    auto sub = bus.subscribe<Ping>([&received](const Ping& e) { received.push_back(e.value); });
+
+    bus.publish(Ping{42});
+
+    std::vector<int> expected_received = {42};
+
+    CHECK(received == expected_received);
+}
