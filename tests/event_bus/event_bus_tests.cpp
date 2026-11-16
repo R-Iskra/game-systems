@@ -50,3 +50,23 @@ TEST_CASE("every subscriber receives the event, in subscription order", "[event_
 
     CHECK(log == expected_log);
 }
+
+TEST_CASE("publish only reaches subscribers of that event type", "[event_bus][publish]") {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    SubscriptionHandle ping = bus.subscribe<Ping>(record(log, "Ping"));
+    SubscriptionHandle pong = bus.subscribe<Pong>(record(log, "Pong"));
+
+    bus.publish(Ping{42});
+
+    std::vector<std::string> expected_log = {"Ping"};
+
+    CHECK(log == expected_log);
+
+    bus.publish(Pong{});
+
+    expected_log = {"Ping", "Pong"};
+
+    CHECK(log == expected_log);
+}
