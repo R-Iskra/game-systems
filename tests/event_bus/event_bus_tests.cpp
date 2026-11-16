@@ -154,3 +154,24 @@ TEST_CASE("move-constructing a handle transfers the subscription", "[event_bus][
 
     CHECK(log == expected_log);
 }
+
+TEST_CASE("assigning over an active handle ends the old subscription", "[event_bus][handle]") {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    SubscriptionHandle sub = bus.subscribe<Ping>(record(log, "Old"));
+
+    bus.publish(Ping{42});
+
+    std::vector<std::string> expected_log = {"Old"};
+
+    REQUIRE(log == expected_log);
+
+    sub = bus.subscribe<Ping>(record(log, "New"));
+
+    bus.publish(Ping{42});
+
+    expected_log = {"Old", "New"};
+
+    CHECK(log == expected_log);
+}
