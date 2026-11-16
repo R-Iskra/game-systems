@@ -4,6 +4,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -123,6 +124,31 @@ TEST_CASE("move-assigning a handle transfers the subscription", "[event_bus][han
 
         REQUIRE(log == expected_log);
     }
+
+    bus.publish(Ping{42});
+
+    CHECK(log == expected_log);
+}
+
+TEST_CASE("move-constructing a handle transfers the subscription", "[event_bus][handle]") {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    std::vector<std::string> expected_log = {"Original"};
+
+    std::optional<SubscriptionHandle> moved;
+
+    {
+        SubscriptionHandle original = bus.subscribe<Ping>(record(log, "Original"));
+
+        moved.emplace(std::move(original));
+    }
+
+    bus.publish(Ping{42});
+
+    REQUIRE(log == expected_log);
+
+    moved.reset();
 
     bus.publish(Ping{42});
 
