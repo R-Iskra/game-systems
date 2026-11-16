@@ -5,6 +5,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace game_systems;
@@ -92,6 +93,31 @@ TEST_CASE("destroying a handle ends its subscription", "[event_bus][handle]") {
 
     {
         SubscriptionHandle ping = bus.subscribe<Ping>(record(log, "Ping"));
+
+        bus.publish(Ping{42});
+
+        REQUIRE(log == expected_log);
+    }
+
+    bus.publish(Ping{42});
+
+    CHECK(log == expected_log);
+}
+
+TEST_CASE("move-assigning a handle transfers the subscription", "[event_bus][handle]") {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    std::vector<std::string> expected_log = {"Original"};
+
+    {
+        SubscriptionHandle moved;
+
+        {
+            SubscriptionHandle original = bus.subscribe<Ping>(record(log, "Original"));
+
+            moved = std::move(original);
+        }
 
         bus.publish(Ping{42});
 
