@@ -70,3 +70,16 @@ TEST_CASE("publish only reaches subscribers of that event type", "[event_bus][pu
 
     CHECK(log == expected_log);
 }
+
+TEST_CASE("publishing an event with no subscribers does nothing", "[event_bus][publish]") {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    CHECK_NOTHROW(bus.publish(Ping{42}));
+
+    SubscriptionHandle ping = bus.subscribe<Ping>(record(log, "Ping"));
+
+    CHECK_NOTHROW(bus.publish(Pong{}));
+
+    CHECK(log.empty());
+}
