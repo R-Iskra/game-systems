@@ -83,3 +83,22 @@ TEST_CASE("publishing an event with no subscribers does nothing", "[event_bus][p
 
     CHECK(log.empty());
 }
+
+TEST_CASE("destroying a handle ends its subscription", "[event_bus][handle]") {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    std::vector<std::string> expected_log = {"Ping"};
+
+    {
+        SubscriptionHandle ping = bus.subscribe<Ping>(record(log, "Ping"));
+
+        bus.publish(Ping{42});
+
+        REQUIRE(log == expected_log);
+    }
+
+    bus.publish(Ping{42});
+
+    CHECK(log == expected_log);
+}
