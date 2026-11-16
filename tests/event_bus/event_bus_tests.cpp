@@ -35,3 +35,18 @@ TEST_CASE("publish delivers the event's data to a subscriber", "[event_bus][publ
 
     CHECK(received == expected_received);
 }
+
+TEST_CASE("every subscriber receives the event, in subscription order", "[event_bus][publish]") {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    SubscriptionHandle a = bus.subscribe<Ping>(record(log, "A"));
+    SubscriptionHandle b = bus.subscribe<Ping>(record(log, "B"));
+    SubscriptionHandle c = bus.subscribe<Ping>(record(log, "C"));
+
+    bus.publish(Ping{42});
+
+    std::vector<std::string> expected_log = {"A", "B", "C"};
+
+    CHECK(log == expected_log);
+}
