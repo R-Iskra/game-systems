@@ -175,3 +175,79 @@ TEST_CASE("assigning over an active handle ends the old subscription", "[event_b
 
     CHECK(log == expected_log);
 }
+
+TEST_CASE(
+    "subscribing during a publish takes effect after the publish", "[event_bus][reentrancy]"
+) {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    SubscriptionHandle late;
+    bool subscribed = false;
+
+    SubscriptionHandle first = bus.subscribe<Ping>([&](const Ping&) {
+        log.push_back("First");
+
+        if (!subscribed) {
+            late = bus.subscribe<Ping>(record(log, "Late"));
+            subscribed = true;
+        }
+    });
+
+    bus.publish(Ping{42});
+
+    std::vector<std::string> expected_log = {"First"};
+
+    REQUIRE(log == expected_log);
+
+    bus.publish(Ping{42});
+
+    expected_log = {"First", "First", "Late"};
+
+    CHECK(log == expected_log);
+}
+
+TEST_CASE(
+    "subscribing during a nested publish waits for the outermost publish", "[event_bus][reentrancy]"
+) {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    SubscriptionHandle late;
+    bool ping_published = false;
+    bool late_subscribed = false;
+
+    SubscriptionHandle pong = bus.subscribe<Pong>([&](const Pong&) {
+        log.push_back("Pong");
+
+        if (!late_subscribed) {
+            late_subscribed = true;
+
+            late = bus.subscribe<Ping>(record(log, "Late"));
+        }
+    });
+
+    SubscriptionHandle ping = bus.subscribe<Ping>([&](const Ping&) {
+        log.push_back("Ping");
+
+        if (!ping_published) {
+            ping_published = true;
+
+            bus.publish(Pong{});
+
+            bus.publish(Ping{42});
+        }
+    });
+
+    bus.publish(Ping{42});
+
+    std::vector<std::string> expected_log = {"Ping", "Pong", "Ping"};
+
+    REQUIRE(log == expected_log);
+
+    bus.publish(Ping{42});
+
+    expected_log = {"Ping", "Pong", "Ping", "Ping", "Late"};
+
+    CHECK(log == expected_log);
+}
