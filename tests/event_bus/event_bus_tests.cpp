@@ -338,3 +338,27 @@ TEST_CASE(
 
     CHECK(log == expected_log);
 }
+
+TEST_CASE(
+    "a nested publish is delivered fully before the outer publish continues",
+    "[event_bus][reentrancy]"
+) {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    SubscriptionHandle first = bus.subscribe<Ping>([&](const Ping&) {
+        log.push_back("First");
+
+        bus.publish(Pong{});
+    });
+
+    SubscriptionHandle pong = bus.subscribe<Pong>(record(log, "Pong"));
+
+    SubscriptionHandle second = bus.subscribe<Ping>(record(log, "Second"));
+
+    bus.publish(Ping{42});
+
+    std::vector<std::string> expected_log = {"First", "Pong", "Second"};
+
+    CHECK(log == expected_log);
+}
