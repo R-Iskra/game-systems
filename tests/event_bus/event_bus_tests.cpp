@@ -308,3 +308,33 @@ TEST_CASE("unsubscribing yourself during a publish", "[event_bus][reentrancy]") 
 
     CHECK(log == expected_log);
 }
+
+TEST_CASE(
+    "subscribing and unsubscribing within one publish never activates the subscription",
+    "[event_bus][reentrancy]"
+) {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    SubscriptionHandle late;
+
+    SubscriptionHandle first = bus.subscribe<Ping>([&](const Ping&) {
+        log.push_back("First");
+
+        late = bus.subscribe<Ping>(record(log, "Late"));
+
+        late = SubscriptionHandle();
+    });
+
+    bus.publish(Ping{42});
+
+    std::vector<std::string> expected_log = {"First"};
+
+    REQUIRE(log == expected_log);
+
+    bus.publish(Ping{42});
+
+    expected_log = {"First", "First"};
+
+    CHECK(log == expected_log);
+}
