@@ -251,3 +251,33 @@ TEST_CASE(
 
     CHECK(log == expected_log);
 }
+
+TEST_CASE(
+    "unsubscribing during a publish stops later callbacks in the same publish",
+    "[event_bus][reentrancy]"
+) {
+    std::vector<std::string> log;
+    EventBus bus;
+
+    SubscriptionHandle second;
+
+    SubscriptionHandle first = bus.subscribe<Ping>([&](const Ping&) {
+        log.push_back("First");
+
+        second = SubscriptionHandle();
+    });
+
+    second = bus.subscribe<Ping>(record(log, "Second"));
+
+    bus.publish(Ping{42});
+
+    std::vector<std::string> expected_log = {"First"};
+
+    REQUIRE(log == expected_log);
+
+    bus.publish(Ping{42});
+
+    expected_log = {"First", "First"};
+
+    CHECK(log == expected_log);
+}
